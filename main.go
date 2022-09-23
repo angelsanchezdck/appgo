@@ -18,7 +18,7 @@ import (
 func main() {
 	viper.AutomaticEnv()
 	viper.SetDefault("ListeningAddr", "0.0.0.0:8080")
-	viper.SetDefault("BucketName", "bucket-name")
+	viper.SetDefault("BucketName", "js-testing-kyc")
 	handleRequests(viper.GetString("ListeningAddr"), viper.GetString("BucketName"))
 }
 
@@ -36,13 +36,6 @@ func handleRequests(ListeningAddr, BucketName string) {
 	if err != nil {
 		panic(err)
 	}
-}
-
-func JSONError(w http.ResponseWriter, err interface{}, code int) {
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.Header().Set("X-Content-Type-Options", "nosniff")
-	w.WriteHeader(code)
-	json.NewEncoder(w).Encode(err)
 }
 
 func putfile(b string) http.HandlerFunc {
