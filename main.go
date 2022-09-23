@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"time"
 
@@ -37,31 +38,44 @@ func handleRequests(ListeningAddr, BucketName string) {
 	}
 }
 
+func JSONError(w http.ResponseWriter, err interface{}, code int) {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
+	w.WriteHeader(code)
+	json.NewEncoder(w).Encode(err)
+}
+
 func putfile(b string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
 		sess, err := createSession()
 		if err != nil {
-			panic(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			io.WriteString(w, "err: unable to create session\n")
+			return
 		}
 
 		content, err := common.ParseBody(r.Body)
 		if err != nil {
-			fmt.Printf("unable parse content, %v", err)
 			w.WriteHeader(http.StatusBadRequest)
+			io.WriteString(w, "err: unable to parse content\n")
+			return
 		}
 
 		content.Bucket = b
 		result, err := common.CreateFile(content, sess)
 		if err != nil {
-			fmt.Printf("unable to create file, %v", err)
 			w.WriteHeader(http.StatusInternalServerError)
+			io.WriteString(w, "err: unable to create file\n")
+			return
 		}
 
-		w.Header().Set("Content-Type", "application/json")
 		err = json.NewEncoder(w).Encode(result)
 		if err != nil {
-			fmt.Printf("unable to parse result, %v", err)
 			w.WriteHeader(http.StatusInternalServerError)
+			io.WriteString(w, "err: unable to parse result\n")
+			return
 		}
 	}
 }
