@@ -38,8 +38,6 @@ func uploadFile(content *File, sess *session.Session) (*s3manager.UploadOutput, 
 	fmt.Printf("Error uploadFile 3")
 	if err != nil {
 		fmt.Printf("Error uploading file: %v", err)
-		fmt.Printf(err)
-		fmt.Printf(output)
 		return nil, err
 	}
 
