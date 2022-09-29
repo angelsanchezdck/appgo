@@ -18,7 +18,7 @@ import (
 func main() {
 	viper.AutomaticEnv()
 	viper.SetDefault("ListeningAddr", "0.0.0.0:8080")
-	viper.SetDefault("BucketName", "js-testing-kyc")
+	viper.SetDefault("BucketName", "mybucketr2")
 	handleRequests(viper.GetString("ListeningAddr"), viper.GetString("BucketName"))
 }
 
@@ -75,7 +75,7 @@ func putfile(b string) http.HandlerFunc {
 
 func createSession() (*session.Session, error) {
 	viper.AutomaticEnv()
-	viper.SetDefault("AWSRegion", "us-west-1")
+	viper.SetDefault("AWSRegion", "us-west-2")
 	sess, err := session.NewSession(&aws.Config{
 		Region: aws.String(viper.GetString("AWSRegion"))},
 	)
