@@ -11,31 +11,34 @@ import (
 )
 
 func CreateFile(content *File, sess *session.Session) (*File, error) {
-	fmt.Printf("Error CreateFile 1")
+	
 	output, err := uploadFile(content, sess)
-	fmt.Printf("Error CreateFile 2")
+	
 	if err != nil {
 		fmt.Printf("error generating file: %v", err)
 		return nil, err
 	}
 
 	content.Path = output.Location
+	fmt.Println(content.Path)
 	return content, nil
 }
 
 func uploadFile(content *File, sess *session.Session) (*s3manager.UploadOutput, error) {
 	uploader := s3manager.NewUploader(sess)
-	fmt.Printf("Error uploadFile 1")
+	
 	input := &s3manager.UploadInput{
 		Bucket:      aws.String(content.Bucket),
 		Key:         aws.String(content.FileName),
 		Body:        bytes.NewReader([]byte(content.Content)),
 		ContentType: aws.String("text/plain"),
 	}
-	fmt.Printf("Error uploadFile 2")
+	fmt.Println("------")
+	fmt.Println(content.Bucket)
+	fmt.Println(content.FileName)
 	output, err := uploader.UploadWithContext(context.Background(), input)
 	
-	fmt.Printf("Error uploadFile 3")
+	fmt.Printf("*-*-*-*-")
 	if err != nil {
 		fmt.Printf("Error uploading file: %v", err)
 		return nil, err
